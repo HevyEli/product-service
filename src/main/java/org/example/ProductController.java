@@ -23,7 +23,7 @@ public class ProductController {
 
     @GetMapping("/getAllProducts")
     public List<Product> getAllProducts() {
-        logger.info("getAllProducts received request.");
+        logger.info("getAllProducts received request");
         if (productRepository.getAllProducts().size() < 1) {
             logger.info("getAllProducts response: There are no products available.");
         }
@@ -36,7 +36,7 @@ public class ProductController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable long id) {
-        logger.info("getProductById received request");
+        logger.info("getProductById received request for product: {}", id);
         Product product = productRepository.getProductById(id);
         if (product == null) {
             logger.info("There is no product with id {}.", id);
@@ -49,7 +49,7 @@ public class ProductController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteProductById(@PathVariable long id) {
-        logger.info("deleteProductById received request.");
+        logger.info("deleteProductById received request to delete product: {}.", id);
         Product product = productRepository.getProductById(id);
         if (product == null) {
             logger.info("No product with id {} found.", id);
@@ -62,7 +62,7 @@ public class ProductController {
 
     @PostMapping
     public ResponseEntity<String> createProduct(@RequestBody Product product) {
-        logger.info("createProduct received request.");
+        logger.info("createProduct received request to create product: " + product);
         productRepository.createProduct(product);
         logger.info("Product " + product + " has been created.");
         return ResponseEntity.status(HttpStatus.CREATED).body("Product " + product + " has been created.");
@@ -70,7 +70,7 @@ public class ProductController {
 
     @PutMapping("/{id}")
     public ResponseEntity<String> editProductById(@PathVariable long id, @RequestBody Product product) {
-        logger.info("editProductById received request.");
+        logger.info("editProductById received request to edit product {}.", id);
         product = productRepository.getProductById(id);
         if (product == null) {
             logger.info("Product {} has not been found.", id);
