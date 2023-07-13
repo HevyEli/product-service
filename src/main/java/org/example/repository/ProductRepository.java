@@ -23,10 +23,9 @@ public class ProductRepository {
     }
 
     public Product deleteProductById (long id) {
-        for (Product p : products) {
-            if (p.getId() == id) {
-                products.remove(p);
-            }
+    Product product = getProductById(id);
+    if (product == null) {
+        products.remove(product);
         }
         return null;
     }
@@ -35,14 +34,13 @@ public class ProductRepository {
     }
 
     public Product editProductById  (long id, String name, double price, String description) {
-        for (Product p : products) {
-            if (p.getId() == id) {
-                p.setName(name);
-                p.setPrice(price);
-                p.setDescription(description);
-            }
+    Product product = getProductById(id);
+    if (product != null) {
+        product.setName(name);
+        product.setPrice(price);
+        product.setDescription(description);
         }
-        return null;
+    return null;
     }
 
 }
