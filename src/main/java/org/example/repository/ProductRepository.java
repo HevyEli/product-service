@@ -1,4 +1,5 @@
 package org.example.repository;
+
 import org.example.Product;
 import org.springframework.stereotype.Repository;
 
@@ -11,7 +12,7 @@ public class ProductRepository {
 
     public Product getProductById(long id) {
         for (Product p : products) {
-            if  (p.getId() == id) {
+            if (p.getId() == id) {
                 return p;
             }
         }
@@ -22,25 +23,38 @@ public class ProductRepository {
         return products;
     }
 
-    public Product deleteProductById (long id) {
-    Product product = getProductById(id);
-    if (product == null) {
-        products.remove(product);
+    public boolean deleteProductById(long id) {
+        Product product = getProductById(id);
+        if (product != null) {
+            products.remove(product);
+            return true;
+        } else {
+            return false;
         }
-        return null;
     }
+
     public void createProduct(Product item) {
         products.add(item);
     }
 
-    public Product editProductById  (long id, String name, double price, String description) {
-    Product product = getProductById(id);
-    if (product != null) {
-        product.setName(name);
-        product.setPrice(price);
-        product.setDescription(description);
+    public Product editProductById(long id, String name, double price, String description, int quantity) {
+        Product product = getProductById(id);
+        if (product != null) {
+            product.setName(name);
+            product.setPrice(price);
+            product.setDescription(description);
+            product.setQuantity(quantity);
+            return product;
         }
-    return null;
+        return null;
+    }
+    public Product editProductQtyById(long id, int quantity) {
+        Product product = getProductById(id);
+        if (product != null) {
+            product.setQuantity(quantity);
+            return product;
+        }
+        return null;
     }
 
 }
