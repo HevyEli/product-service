@@ -19,6 +19,15 @@ public class ProductRepository {
         return null;
     }
 
+    public boolean checkIfProductExists(long id) {
+        Product product = getProductById(id);
+        if (product != null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public List<Product> getAllProducts() {
         return products;
     }

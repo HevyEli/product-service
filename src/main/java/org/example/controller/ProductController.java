@@ -66,6 +66,11 @@ public class ProductController {
     @PostMapping
     public ResponseEntity<String> createProduct(@RequestBody Product product) {
         logger.info("createProduct received request to create product: " + product);
+        boolean checkIfExists = productRepository.checkIfProductExists(product.getId());
+        if (checkIfExists == true) {
+            logger.info("Product {} already exists.", product.getId());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Product " + product.getId() + " already exists");
+        }
         productRepository.createProduct(product);
         logger.info("Product " + product + " has been created.");
         return ResponseEntity.status(HttpStatus.CREATED).body("Product " + product + " has been created.");
