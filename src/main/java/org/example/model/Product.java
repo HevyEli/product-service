@@ -1,11 +1,12 @@
-package org.example;
+package org.example.model;
 
 public class Product {
-    public Product(long id, String name, double price, String description) {
+    public Product(long id, String name, double price, String description, int quantity) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.description = description;
+        this.quantity = quantity;
     }
 
     public Product() {}
@@ -14,6 +15,26 @@ public class Product {
     private String name;
     private double price;
     private String description;
+    private int quantity;
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                ", description='" + description + '\'' +
+                ", quantity=" + quantity +
+                '}';
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
 
     /**
      * get field
@@ -33,15 +54,6 @@ public class Product {
         this.id = id;
     }
 
-    @Override
-    public String toString() {
-        return "Product{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", price=" + price +
-                ", description='" + description + '\'' +
-                '}';
-    }
 
     /**
      * get field

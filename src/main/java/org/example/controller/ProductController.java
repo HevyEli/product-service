@@ -1,5 +1,6 @@
-package org.example;
+package org.example.controller;
 
+import org.example.model.Product;
 import org.example.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -7,7 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -24,6 +26,7 @@ public class ProductController {
     @GetMapping("/getAllProducts")
     public List<Product> getAllProducts() {
         logger.info("getAllProducts received request");
+        List<Product> products = productRepository.getAllProducts();
         if (productRepository.getAllProducts().size() < 1) {
             logger.info("getAllProducts response: There are no products available.");
         }
@@ -31,6 +34,7 @@ public class ProductController {
             logger.info("getAllProducts response: Returned list {} of products.", productRepository.getAllProducts().size());
             logger.info("Products: {}", productRepository.getAllProducts());
         }
+        products.sort(Comparator.comparing(Product::getId));
         return productRepository.getAllProducts();
     }
 
@@ -50,13 +54,12 @@ public class ProductController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteProductById(@PathVariable long id) {
         logger.info("deleteProductById received request to delete product: {}.", id);
-        Product product = productRepository.getProductById(id);
-        if (product == null) {
+        boolean isDeleted = productRepository.deleteProductById(id);
+        if (isDeleted == false) {
             logger.info("No product with id {} found.", id);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product " + id + " not found.");
         }
         logger.info("Product id {} has been deleted.", id);
-        logger.info(String.valueOf(product) + "has been deleted.");
         return ResponseEntity.status(HttpStatus.OK).body("Product " + id + " has been deleted.");
     }
 
@@ -69,18 +72,38 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> editProductById(@PathVariable long id, @RequestBody Product product) {
+    public ResponseEntity<String> editProductById(@PathVariable long id, @RequestBody Product newProduct) {
         logger.info("editProductById received request to edit product {}.", id);
-        product = productRepository.getProductById(id);
-        if (product == null) {
+
+        Product oldProduct = productRepository.getProductById(id);
+        if (oldProduct == null) {
             logger.info("Product {} has not been found.", id);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product " + id + "has not been found!");
         }
-        productRepository.editProductById(id, product.getName(), product.getPrice(), product.getDescription());
-        logger.info("Product " + id + " has been updated. Old values Id: " + product.getId() + "name: " + product.getName()
-                    + "Price: " + product.getPrice() + "Description: " + product.getDescription() + "new values id:.", id );
+        Product updatedProduct = productRepository.editProductById(id, newProduct.getName(), newProduct.getPrice(), newProduct.getDescription(), newProduct.getQuantity());
+        logger.info("Product " + id + " has been updated. " +
+                "Old values Id: " + oldProduct.getId() + " name: " + oldProduct.getName() + "Price: " + oldProduct.getPrice() + " Description: " + oldProduct.getDescription() +
+                "new values id:{}." + " name: " + updatedProduct.getName() + " price: " + updatedProduct.getPrice() + " description: " + updatedProduct.getDescription() + "qty: " + updatedProduct.getQuantity(), id);
 
-        return ResponseEntity.status(HttpStatus.OK).body("Product " + id + " has been updated.");
+        return ResponseEntity.status(HttpStatus.OK).body("Product " + id + " has been updated with these attributes, "
+                + "name: " + updatedProduct.getName() + " price: " + updatedProduct.getPrice() + " quantity: "
+                + updatedProduct.getQuantity() + " descripriton: " + updatedProduct.getDescription() + ".");
+    }
+
+    @PutMapping("/editQty/{id}")
+    public ResponseEntity<String> editProductQtyById(@PathVariable long id, @RequestBody Product newQty) {
+        logger.info("editProductQtyById received request update Qty for product {}.", id);
+
+        Product existingProduct = productRepository.getProductById(id);
+        if (existingProduct == null) {
+            logger.info("Product {} has not been found.", id);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product " + id + " has not been found!");
+        }
+        Product newQuantity = productRepository.editProductQtyById(id, newQty.getQuantity());
+        logger.info("Product {} quantity has been updated from: {} to {}.", id, existingProduct.getQuantity(), newQuantity.getQuantity());
+        return ResponseEntity.status(HttpStatus.OK).body("Product " + id + " quantity has been update from "
+                + existingProduct.getQuantity()
+                + " to " + newQuantity.getQuantity() + ".");
     }
 
     private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
