@@ -6,7 +6,25 @@
 
     <groupId>org.example</groupId>
     <artifactId>product-service</artifactId>
+    <name>spring-boot-product-service</name>
+    <description>spring-boot-product-service</description>
+    <scm>
+        <url>https://github.com/HevyEli/product-service</url>
+        <connection>scm:git:git://github.com/HevyEli/project.git</connection>
+        <developerConnection>scm:git:ssh://github.com/HevyEli/project.git</developerConnection>
+    </scm>
     <version>1.0-SNAPSHOT</version>
+
+    <build>
+        <finalName>${project.artifactId}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
