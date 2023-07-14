@@ -1,6 +1,6 @@
 package org.example.repository;
 
-import org.example.Product;
+import org.example.model.Product;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;

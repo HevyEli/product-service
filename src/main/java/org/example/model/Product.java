@@ -1,4 +1,4 @@
-package org.example;
+package org.example.model;
 
 public class Product {
     public Product(long id, String name, double price, String description, int quantity) {

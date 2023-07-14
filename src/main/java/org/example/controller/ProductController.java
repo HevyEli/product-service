@@ -1,5 +1,6 @@
-package org.example;
+package org.example.controller;
 
+import org.example.model.Product;
 import org.example.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -7,7 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -24,6 +26,7 @@ public class ProductController {
     @GetMapping("/getAllProducts")
     public List<Product> getAllProducts() {
         logger.info("getAllProducts received request");
+        List<Product> products = productRepository.getAllProducts();
         if (productRepository.getAllProducts().size() < 1) {
             logger.info("getAllProducts response: There are no products available.");
         }
@@ -31,6 +34,7 @@ public class ProductController {
             logger.info("getAllProducts response: Returned list {} of products.", productRepository.getAllProducts().size());
             logger.info("Products: {}", productRepository.getAllProducts());
         }
+        products.sort(Comparator.comparing(Product::getId));
         return productRepository.getAllProducts();
     }
 
