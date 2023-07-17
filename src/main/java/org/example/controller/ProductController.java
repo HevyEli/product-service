@@ -1,14 +1,15 @@
 package org.example.controller;
 
+import org.example.dto.ResponseMessage;
 import org.example.model.Product;
 import org.example.repository.ProductRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import java.util.Collections;
+
 import java.util.Comparator;
 import java.util.List;
 
@@ -39,16 +40,16 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable long id) {
+    public ResponseEntity<ResponseMessage> getProductById(@PathVariable long id) {
         logger.info("getProductById received request for product: {}", id);
         Product product = productRepository.getProductById(id);
         if (product == null) {
             logger.info("There is no product with id {}.", id);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage( HttpStatus.NOT_FOUND, "Product not found", "Product not found" ));
         }
         logger.info("Product {} found.", id);
         logger.info(String.valueOf(product));
-        return ResponseEntity.status(HttpStatus.OK).body(product);
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(HttpStatus.OK, "Product " + product, "Product " + product));
     }
 
     @DeleteMapping("/{id}")
@@ -64,16 +65,20 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<String> createProduct(@RequestBody Product product) {
+    public ResponseEntity<ResponseMessage> createProduct(@RequestBody Product product) {
         logger.info("createProduct received request to create product: " + product);
         boolean checkIfExists = productRepository.checkIfProductExists(product.getId());
         if (checkIfExists == true) {
             logger.info("Product {} already exists.", product.getId());
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Product " + product.getId() + " already exists");
+            ResponseMessage responseMessage = new ResponseMessage(HttpStatus.CONFLICT, "Product " + product.getId() + " already exists", "ProductResponse Details...");
+            return new ResponseEntity<>(responseMessage, HttpStatus.CONFLICT);
+//            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ResponseMessage("Product " + product.getId() + " already exists"));
         }
         productRepository.createProduct(product);
         logger.info("Product " + product + " has been created.");
-        return ResponseEntity.status(HttpStatus.CREATED).body("Product " + product + " has been created.");
+        ResponseMessage responseMessage = new ResponseMessage(HttpStatus.OK, "product: " + product.getId() + " has been created.", "{ details: " + product + " }");
+        return new ResponseEntity(responseMessage, HttpStatus.CREATED);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseMessage("Product " + product + " has been created."));
     }
 
     @PutMapping("/{id}")
@@ -99,6 +104,7 @@ public class ProductController {
     public ResponseEntity<String> editProductQtyById(@PathVariable long id, @RequestBody Product newQty) {
         logger.info("editProductQtyById received request update Qty for product {}.", id);
 
+//        Product existingProduct = productRepository.getProductById(id);
         Product existingProduct = productRepository.getProductById(id);
         if (existingProduct == null) {
             logger.info("Product {} has not been found.", id);
