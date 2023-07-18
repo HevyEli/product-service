@@ -39,7 +39,7 @@ class ProductControllerTest {
     }
 
     @Test
-    void testGetProductById() {
+    void testGetProductById() throws JsonProcessingException {
         when(productRepository.getProductById(anyLong())).thenReturn(new Product(0L, "name", 0d, "description", 0));
 
         ResponseEntity<ResponseMessage> result = productController.getProductById(0L);
@@ -50,7 +50,7 @@ class ProductControllerTest {
     void testDeleteProductById() {
         when(productRepository.deleteProductById(anyLong())).thenReturn(true);
 
-        ResponseEntity<String> result = productController.deleteProductById(0L);
+        ResponseEntity<ResponseMessage> result = productController.deleteProductById(0L);
         Assertions.assertEquals(null, result);
     }
 
@@ -67,16 +67,16 @@ class ProductControllerTest {
         when(productRepository.getProductById(anyLong())).thenReturn(new Product(0L, "name", 0d, "description", 0));
         when(productRepository.editProductById(anyLong(), anyString(), anyDouble(), anyString(), anyInt())).thenReturn(new Product(1, "Test Mobil 1", 13900, "Testovaci produkt 1", 99));
 
-        ResponseEntity<String> result = productController.editProductById(0L, new Product(0L, "name", 0d, "description", 0));
+        ResponseEntity<ResponseMessage> result = productController.editProductById(0L, new Product(0L, "name", 0d, "description", 0));
         Assertions.assertEquals(null, result);
     }
 
     @Test
-    void testEditProductQtyById() {
+    void testEditProductQtyById() throws JsonProcessingException {
         when(productRepository.getProductById(anyLong())).thenReturn(new Product(0L, null, 0d, null, 0));
         when(productRepository.editProductQtyById(anyLong(), anyInt())).thenReturn(new Product(0L, null, 0d, null, 0));
 
-        ResponseEntity<String> result = productController.editProductQtyById(0L, new Product(0L, null, 0d, null, 0));
+        ResponseEntity<ResponseMessage> result = productController.editProductQtyById(0L, new Product(0L, null, 0d, null, 0));
         Assertions.assertEquals(null, result);
     }
 }

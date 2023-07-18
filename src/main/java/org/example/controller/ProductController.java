@@ -40,16 +40,15 @@ public class ProductController {
 
         if (products.isEmpty()) {
             logger.info("getAllProducts response: There are no products available.");
-            return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseMessage(
-                            HttpStatus.NOT_FOUND, "There are no products", "[empty list!]"));
+            ResponseMessage responseMessage = new ResponseMessage(HttpStatus.NOT_FOUND, "There are no products", "[empty list!]");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseMessage);
         }
         else {
             logger.info("getAllProducts response: Returned list {} of products.", products.size());
         }
         products.sort(Comparator.comparing(Product::getId));
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(HttpStatus.OK, products.size()  +
-                " product(s) returned", "{ \"product\": [ " + productsJson + " ] }"));
+        ResponseMessage responseMessage = new ResponseMessage(HttpStatus.OK, products.size()  + " product(s) returned", "{ \"product\": [ " + productsJson + " ] }");
+        return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
     }
 
     @GetMapping("/{id}")
@@ -60,11 +59,13 @@ public class ProductController {
         String productJson = objectMapper.writeValueAsString(product);
         if (product == null) {
             logger.info("There is no product with id {}.", id);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage( HttpStatus.NOT_FOUND, "Product id "+ id + " not found", "Product not found" ));
+            ResponseMessage responseMessage = new ResponseMessage(HttpStatus.NOT_FOUND, "Product id "+ id + " not found", "Product not found" );
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseMessage);
         }
         logger.info("Product {} found.", id);
         logger.info(String.valueOf(product));
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(HttpStatus.OK, "Product id" + product, "{ \"product\": [ " + productJson + " ] }"));
+        ResponseMessage responseMessage = new ResponseMessage(HttpStatus.OK, "Product id" + product, "{ \"product\": [ " + productJson + " ] }");
+        return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
     }
 
     @DeleteMapping("/{id}")
@@ -74,11 +75,13 @@ public class ProductController {
         if (isDeleted == false) {
             logger.info("No product with id {} found.", id);
 //            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product " + id + " not found.");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(HttpStatus.NOT_FOUND, "Product " + id + " not found", "[]"));
+            ResponseMessage responseMessage = new ResponseMessage(HttpStatus.NOT_FOUND, "Product " + id + " not found", "[]");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseMessage);
         }
         logger.info("Product id {} has been deleted.", id);
 //        return ResponseEntity.status(HttpStatus.OK).body("Product " + id + " has been deleted.");
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(HttpStatus.OK, "Product " + id + " has been deleted", "[DLTD]"));
+        ResponseMessage responseMessage = new ResponseMessage(HttpStatus.OK, "Product " + id + " has been deleted", "[DLTD]");
+        return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
 
     }
 
@@ -107,39 +110,45 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> editProductById(@PathVariable long id, @RequestBody Product newProduct)  {
+    public ResponseEntity<ResponseMessage> editProductById(@PathVariable long id, @RequestBody Product newProduct)  {
         logger.info("editProductById received request to edit product {}.", id);
 
         Product oldProduct = productRepository.getProductById(id);
         if (oldProduct == null) {
             logger.info("Product {} has not been found.", id);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product " + id + "has not been found!");
+            ResponseMessage responseMessage = new ResponseMessage(HttpStatus.NOT_FOUND, "Product " + id + "has not been found!", "[ERROR]");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseMessage);
         }
         Product updatedProduct = productRepository.editProductById(id, newProduct.getName(), newProduct.getPrice(), newProduct.getDescription(), newProduct.getQuantity());
         logger.info("Product " + id + " has been updated. " +
                 "Old values Id: " + oldProduct.getId() + " name: " + oldProduct.getName() + "Price: " + oldProduct.getPrice() + " Description: " + oldProduct.getDescription() +
                 "new values id:{}." + " name: " + updatedProduct.getName() + " price: " + updatedProduct.getPrice() + " description: " + updatedProduct.getDescription() + "qty: " + updatedProduct.getQuantity(), id);
 
-        return ResponseEntity.status(HttpStatus.OK).body("Product: "+"id: " + id + " has been updated with these attributes, "
+        ResponseMessage responseMessage = new ResponseMessage(HttpStatus.OK, "", "Product: "+"id: " + id + " has been updated with these attributes, "
                 + "name: " + updatedProduct.getName() + " price: " + updatedProduct.getPrice() + " quantity: "
                 + updatedProduct.getQuantity() + " descripriton: " + updatedProduct.getDescription() + ".");
+        return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
     }
 
     @PutMapping("/editQty/{id}")
-    public ResponseEntity<String> editProductQtyById(@PathVariable long id, @RequestBody Product newQty) {
+    public ResponseEntity<ResponseMessage> editProductQtyById(@PathVariable long id, @RequestBody Product newQty) throws JsonProcessingException {
         logger.info("editProductQtyById received request update Qty for product {}.", id);
-
 //        Product existingProduct = productRepository.getProductById(id);
         Product existingProduct = productRepository.getProductById(id);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String productJson = objectMapper.writeValueAsString(existingProduct);
         if (existingProduct == null) {
             logger.info("Product {} has not been found.", id);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product " + id + " has not been found!");
+            ResponseMessage responseMessage = new ResponseMessage(HttpStatus.NOT_FOUND, "Product " + id + " has not been found!", "[ERROR]");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseMessage);
         }
         Product newQuantity = productRepository.editProductQtyById(id, newQty.getQuantity());
         logger.info("Product {} quantity has been updated from: {} to {}.", id, existingProduct.getQuantity(), newQuantity.getQuantity());
-        return ResponseEntity.status(HttpStatus.OK).body("Product " + id + " quantity has been update from "
+        ResponseMessage responseMessage = new ResponseMessage(HttpStatus.OK, "Product " + id + " quantity has been update from "
                 + existingProduct.getQuantity()
-                + " to " + newQuantity.getQuantity() + ".");
+                + " to " + newQuantity.getQuantity() + ".", "{ \"product\": [ " + productJson + " ] }");
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
     }
 
     private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
