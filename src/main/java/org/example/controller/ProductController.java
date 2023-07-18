@@ -37,16 +37,17 @@ public class ProductController {
         List<Product> products = productRepository.getAllProducts();
         ObjectMapper objectMapper = new ObjectMapper();
         String productsJson = objectMapper.writeValueAsString(products);
-        if (productRepository.getAllProducts().size() < 1) {
+
+        if (products.isEmpty()) {
             logger.info("getAllProducts response: There are no products available.");
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(HttpStatus.NOT_FOUND, "There are no products", "[empty list!]"));
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    new ResponseMessage(
+                            HttpStatus.NOT_FOUND, "There are no products", "[empty list!]"));
         }
-        if (productRepository.getAllProducts().size() > 0) {
+        else {
             logger.info("getAllProducts response: Returned list {} of products.", products.size());
-            logger.info("Products: {}", productRepository.getAllProducts());
         }
         products.sort(Comparator.comparing(Product::getId));
-//        return productRepository.getAllProducts();
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(HttpStatus.OK, products.size()  +
                 " product(s) returned", "{ \"product\": [ " + productsJson + " ] }"));
     }
