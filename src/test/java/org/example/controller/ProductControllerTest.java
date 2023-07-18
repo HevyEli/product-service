@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.example.dto.ResponseMessage;
 import org.example.model.Product;
 import org.example.repository.ProductRepository;
@@ -30,10 +31,10 @@ class ProductControllerTest {
     }
 
     @Test
-    void testGetAllProducts() {
+    void testGetAllProducts() throws JsonProcessingException {
         when(productRepository.getAllProducts()).thenReturn(List.of(new Product(0L, null, 0d, null, 0)));
 
-        List<Product> result = productController.getAllProducts();
+        List<Product> result = (List<Product>) productController.getAllProducts();
         Assertions.assertEquals(List.of(new Product(0L, null, 0d, null, 0)), result);
     }
 
@@ -54,7 +55,7 @@ class ProductControllerTest {
     }
 
     @Test
-    void testCreateProduct() {
+    void testCreateProduct() throws JsonProcessingException {
         when(productRepository.checkIfProductExists(anyLong())).thenReturn(true);
 
         ResponseEntity<ResponseMessage> result = productController.createProduct(new Product(1, "Test Mobil 1", 13900, "Testovaci produkt 1", 99));

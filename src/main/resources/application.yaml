@@ -1,0 +1,49 @@
+app:
+  product:
+    validation:
+        id:
+          validation: enabled
+  responseMessages:
+    getAllProducts:
+      productNotFound:
+        productNotFoundMsg: "getAllProducts response: There are no products available."
+        productNotFoundCd: "ERR-1."
+      successResponse0:
+        successResponse0Msg: "getAllProducts response: Returned list {} of products."
+        successResponse0Cd: "OK-1"
+      successResponse1:
+        successResponse1Msg:
+        successResponse1Cd:
+    getProductById:
+      productNotFound:
+        productNotFoundMsg: "There is no product with id {}."
+        productNotFoundCd: "ERR-2"
+      productFound:
+        productFoundMsg: "Product {} found "
+        productFoundCd: "OK-2"
+    deleteAllProducts:
+      productNotFound:
+        productNotFoundMsg: "Product {} not found"
+        productNotFoundCd: "ERR-3"
+      productDeleted:
+        productDeletedMsg: "Product {} has been deleted!"
+        productDeletedCd: "DLTD-OK1"
+    createProduct:
+      productNotFound:
+        productNotFoundMsg: "Product {} not found"
+        productNotFoundCd: "ERR-4"
+      productAlreadyExists:
+        productAlreadyExistsMsg: "Product {} already exists"
+        productAlreadyExistsCd: "OK-3"
+      productCreated:
+        productCreatedMsg: "Product {} has been created"
+        productCreatedCd: "OK-4"
+    editProductById:
+      productNotFound:
+        productNotFoundMsg: "Product {} not found"
+        productNotFoundCd: "ERR-5"
+      editProductSuccess:
+        editProductSuccessMsg: "Product {} has been updated"
+        editProductSuccessCd: "OK-6"
+
+
